@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/drawable/bg_fondo.xml" value="0.1" />
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/drawable/border_images.xml" value="0.1" />
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/drawable/edt_id.xml" value="0.1" />
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/drawable/edt_id_red.xml" value="0.1" />
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/drawable/ic_baseline_back_hand_24.xml" value="0.1" />
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/drawable/ic_baseline_person_outline_24.xml" value="0.1" />
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/layout/activity_form_check_in.xml" value="0.14895833333333333" />
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/john.munoz/AndroidStudioProjects/proyectoShadow/app/src/main/res/layout/activity_selector_biometrics.xml" value="0.13177083333333334" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

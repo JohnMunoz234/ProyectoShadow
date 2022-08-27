@@ -1,0 +1,25 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://identy.jfrog.io/identy/identy-finger-release"
+            credentials {
+                //TODO: CG 20220613 SACAR EN PRODUCCION
+                username = "grupodigital"
+                password = "jGfiFNcu88gq74"
+            }
+        }
+
+    }
+}
+rootProject.name = "proyectoShadow"
+include ':app'
