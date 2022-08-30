@@ -29,19 +29,13 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     lateinit var preferences: SharedPreferences
-    lateinit var preferencesHuellas: SharedPreferences
+    lateinit var preferencesTwo: SharedPreferences
     var valor:String? = null
-    var identiUser: IdentyUser = IdentyUser()
      var user: JSONObject? = null
     var nameBundle: String? = null
     var name: String? = null
     var lastName: String? = null
-    var nameComplete: String? = null
     var email:String? = null
-    var fingerIndex: String? = null
-    var fingerring:String? = null
-    var fingerlittle: String? = null
-    var fingermiddle: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,48 +50,40 @@ class MainActivity : AppCompatActivity() {
 
     private fun init(){
         preferences = getSharedPreferences("Elementos", Context.MODE_PRIVATE)
-        preferencesHuellas = getSharedPreferences("Huellas",Context.MODE_PRIVATE)
-       // Datos del preferences
-        Log.e("Datos : ",preferencesHuellas.all.toString())
+        preferencesTwo = getSharedPreferences("Listado",Context.MODE_PRIVATE)
 
         val bundle = intent.extras
         nameBundle = bundle?.getString("nombre").toString()
 
 
+
         Log.e("Datos : ",preferences.all.toString().trim())
+        Log.e("Arrays : ", preferencesTwo.all.toString().trim())
         permissions()
         permissionFiles()
     }
 
     private fun listener(){
         binding.txtRegister.setOnClickListener{ action() }
+        binding.btnLogin2.setOnClickListener{ biometricHands(this,"100",2) }
         binding.btnLogin.setOnClickListener{ loginProcess()}
     }
 
+
     private fun loginProcess(){
         valor  = preferences.getString(binding.edtIdUser.text.toString(),"No existe").toString()
-        val huellas = preferencesHuellas.getString(binding.edtIdUser.text.toString(),"No existe").toString()
+
     if (binding.edtIdUser.text.toString().trim().isEmpty()){
             Toast.makeText(this,"El campo esta vacio, porfavor validar!!!", Toast.LENGTH_SHORT).show()
             errorBgLogin()
         } else {
             if (valor != "No existe"){
                 user = JSONObject(valor)
-                val json = JSONObject(huellas)
 
-                name = user?.getString("name")
-                lastName = user?.getString("apellido")
                 email = user?.getString("email")
 
-                Log.e("Mensaje",user.toString())
-                Log.e("Mensaje usuario",user?.getString("name").toString())
 
-
-                Toast.makeText(this,"Login correcto ha ingresado el usuario ${preferences.getString("Nombre","")}",
-                    Toast.LENGTH_SHORT).show()
-
-                nameComplete = name.plus(lastName).replace(" ","")
-                biometricHands(this, nameComplete!!)
+                biometricHands(this, binding.edtIdUser.text.toString(),1)
             }else{
                 Toast.makeText(this,"Error el id es incorrecto \nPor favor validar!!", Toast.LENGTH_SHORT).show()
             }
@@ -116,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         binding.edtIdUser.setPadding(55)
     }
 
-    private fun biometricHands(activity: Activity,nameComplete: String ){
+    private fun biometricHands(activity: Activity,idUser: String, tipoLogin: Int){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             HandsBiometrics.validationHands(activity,object : IdentyResponseListener {
                 override fun onAttempt(hand: Hand?, p1: Int, map: MutableMap<Finger, Attempt>?) {
@@ -138,9 +124,14 @@ class MainActivity : AppCompatActivity() {
                         try {
 
                             val jsonData = JSONObject(response)
-                            Log.e("Mensaje ==>>",response)
+                            Log.e("Mensaje Validation ==>>",response)
+
+
+
 
                             Log.e("Mensaje acción ==>>",response2)
+
+                            moverWelcome()
                         }catch (error: Exception){
                             error.printStackTrace()
                             Log.e("Mensaje ==>","Error con el json")
@@ -157,7 +148,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-            },nameComplete)
+            },idUser,tipoLogin)
         }
 
     }
@@ -192,70 +183,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun externalFile(json:JSONObject){
-        fingerIndex =  json.getJSONObject("data").getJSONObject("rightindex").getJSONObject("templates").getJSONObject("PNG").getString("DEFAULT")
-        fingerring =  json.getJSONObject("data").getJSONObject("rightring").getJSONObject("templates").getJSONObject("PNG").getString("DEFAULT")
-        fingerlittle =  json.getJSONObject("data").getJSONObject("rightlittle").getJSONObject("templates").getJSONObject("PNG").getString("DEFAULT")
-        fingermiddle =  json.getJSONObject("data").getJSONObject("rightmiddle").getJSONObject("templates").getJSONObject("PNG").getString("DEFAULT")
+    fun moverWelcome(){
 
-        try {
-            val main_folder = getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/anonymous_anonymous/")
-            val file = File(main_folder?.absolutePath,"01.PNG")
-            val osw = FileOutputStream(file)
-            osw.write(fingerIndex?.toByteArray())
-            osw.flush()
-            osw.close()
+        Toast.makeText(this,"Login correcto ha ingresado el usuario $email",
+            Toast.LENGTH_SHORT).show()
 
-            val fileRing = File(main_folder?.absolutePath,"02.PNG")
-            val osw1 =FileOutputStream(fileRing)
-            osw1.write(fingerring?.toByteArray())
-            osw.flush()
-            osw1.close()
-
-
-            val filelittle = File(main_folder?.absolutePath,"03.PNG")
-            val osw2 = FileOutputStream(filelittle)
-            osw2.write(fingerlittle?.toByteArray())
-            osw.flush()
-            osw2.close()
-
-            val filemiddle = File(main_folder?.absolutePath,"04.PNG")
-            val osw3 =FileOutputStream(filemiddle)
-            osw3.write(fingermiddle?.toByteArray())
-            osw.flush()
-            osw3.close()
-
-
-            Log.e("Mensaje","Se pudo grabar :)")
-
-        }catch (io: Exception){
-            Log.e("Mensaje","No se pudo grabar :(")
-            io.printStackTrace()
-        }
+        val intent = Intent(this,welcomeActivity::class.java)
+        startActivity(intent)
     }
 
-    fun searchFile(){
-        val main_folder = getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/anonymous_anonymous/")
-        val file = File(main_folder?.absolutePath,"01.PNG" )
-        try {
-            val fIn= FileInputStream(file)
-            val archivo = InputStreamReader(fIn)
-            val br = BufferedReader(archivo)
-            var linea = br.readLine()
-            val todo = StringBuilder()
-            while (linea != null){
-                todo.append(linea + "\n")
-                linea = br.readLine()
-            }
 
-            br.close()
-            archivo.close()
-            Log.e("File 2 -->>",todo.toString())
-
-        }catch (error: Exception){
-            error.printStackTrace()
-        }
-    }
 
 }
 

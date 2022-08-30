@@ -32,8 +32,6 @@ class OperationsIdenty{
                 CoroutineScope(Dispatchers.IO).launch {
                     user = IdentyUserManager.getInstance(activity).getUserByuserName(name)
                     Log.e("Mensaje", user?.username.toString())
-
-                    IdentyUserManager.getInstance(activity).defaultUser
                 }
             }catch (error: Exception){
                 Toast.makeText(activity, "No se encontro el usuario, el campo estaba vacio !!",Toast.LENGTH_SHORT).show()

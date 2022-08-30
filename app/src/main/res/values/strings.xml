@@ -11,4 +11,7 @@
     <string name="phone">Phone</string>
     <string name="email">Email</string>
     <string name="checkin">Check In</string>
+    <string name="welcome_message">Welcome to project shadow</string>
+    <string name="loadingText">Loading...</string>
+    <string name="Ingre_huellas">Ingresar con huellas</string>
 </resources>

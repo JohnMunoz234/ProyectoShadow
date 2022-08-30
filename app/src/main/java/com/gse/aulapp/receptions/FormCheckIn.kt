@@ -6,8 +6,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.gse.aulapp.receptions.databinding.ActivityFormCheckInBinding
 import com.identy.users.IdentyAppDatabase
@@ -19,11 +21,12 @@ class FormCheckIn : AppCompatActivity() {
     lateinit var binding: ActivityFormCheckInBinding
     lateinit var regex: Regex
     lateinit var preferences: SharedPreferences
+    lateinit var prefeTwo: SharedPreferences
     lateinit var lista: Array<String>
     lateinit var jsonConverter:String
-
+    var set = HashSet<String>()
+    var list = ArrayList<String>()
     var idUser: Int = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFormCheckInBinding.inflate(layoutInflater)
@@ -43,11 +46,17 @@ class FormCheckIn : AppCompatActivity() {
     fun init(){
         regex = Regex("(?:[^<>()\\[\\].,;:\\s@\"]+(?:\\.[^<>()\\[\\].,;:\\s@\"]+)*|\"[^\\n\"]+\")@(?:[^<>()\\[\\].,;:\\s@\"]+\\.)+[^<>()\\[\\]\\.,;:\\s@\"]{2,63}")
         preferences = getSharedPreferences("Elementos", Context.MODE_PRIVATE)
+        prefeTwo = getSharedPreferences("Listado",Context.MODE_PRIVATE)
+
+
+
+        val valores = arrayOf(prefeTwo.getStringSet("Lista de ids",set).toString())
 
         lista = arrayOf("Selecciona Documento","Cedula de ciudadania","Tarjeta de identidad","Contraseña","Pasaporte")
         val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_1,lista)
 
         binding.spListaDocumentos.adapter = adapter
+
     }
 
     fun listener(){
@@ -58,18 +67,26 @@ class FormCheckIn : AppCompatActivity() {
 
         if (validationEmpty()){
 
-            if (validationEmail()){
+            if (validationEmail()) {
                 createJsonUser()
+
+                list.add(binding.edtIdDocument.text.toString())
+
+                set.addAll(list)
                 val editor = preferences.edit()
-                editor.putString("${binding.edtIdDocument.text}",jsonConverter)
-                editor.commit()
+               editor.putString("${binding.edtIdDocument.text}",jsonConverter)
+               editor.commit()
+
+
+                val editorTwo = prefeTwo.edit()
+                editorTwo.putStringSet("Lista de ids",set)
+                editorTwo.commit()
 
                 OperationsIdenty.cargarUsuario(this,binding.edtFirstName.text.toString(),binding.edtEmail.text.toString())
 
+
                 var intent: Intent = Intent(this, SelectorBiometrics::class.java)
                 intent.putExtra("id",binding.edtIdDocument.text.toString())
-                intent.putExtra("name",binding.edtFirstName.text.toString())
-                intent.putExtra("lastname",binding.edtLastName.text.toString())
                 intent.putExtra("email",binding.edtEmail.text.toString())
                 startActivity(intent)
 
@@ -119,7 +136,6 @@ class FormCheckIn : AppCompatActivity() {
         return false
     }
 
-
     private fun createJsonUser(){
         if ( idUser == 0){
             idUser++
@@ -134,5 +150,6 @@ class FormCheckIn : AppCompatActivity() {
         } else if (idUser > 0){
             idUser++
         }
+
     }
 }

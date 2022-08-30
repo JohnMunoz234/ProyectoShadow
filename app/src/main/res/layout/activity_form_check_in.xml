@@ -8,14 +8,13 @@
     android:background="@drawable/bg_fondo"
     >
 
-
     <TextView
         android:id="@+id/txtFormTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="50dp"
         android:layout_marginBottom="30dp"
         android:gravity="center"
@@ -26,7 +25,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="580dp"
         android:layout_below="@id/txtFormTitle"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -35,7 +34,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             >
 
             <EditText
@@ -43,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/firstname"
@@ -57,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edtFirstName"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/lastName"
@@ -71,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edtLastName"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/phone"
@@ -85,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edtPhone"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/email"
@@ -99,7 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/edtEmail"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:padding="20dp" />
@@ -110,13 +109,13 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/spListaDocumentos"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
                 android:hint="@string/Id"
                 android:padding="20dp"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black"/>
+                android:textColorHint="@color/black" />
 
 
             <com.google.android.material.button.MaterialButton
@@ -125,10 +124,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edtIdDocument"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginStart="130dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginBottom="40dp"
+                android:layout_marginBottom="39dp"
                 android:backgroundTint="@color/design_default_color_secondary"
                 android:text="@string/checkin" />
 

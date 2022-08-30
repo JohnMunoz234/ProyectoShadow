@@ -17,6 +17,10 @@ import com.identy.enums.Hand
 import com.identy.enums.Template
 import com.identy.exceptions.NoDetectionModeException
 import com.identy.users.IdentyUser
+import com.identy.users.IdentyUserManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.nio.file.Files
 import java.nio.file.Path
@@ -36,6 +40,7 @@ class HandsBiometrics {
         private val NET_KEY = ""
         lateinit var operations:OperationsIdenty
         lateinit var user: IdentyUser
+        var lista: List<IdentyUser>? = null
 
 
         fun registerHands(
@@ -44,7 +49,7 @@ class HandsBiometrics {
             nombre: String
         ){
 
-            user = OperationsIdenty.buscarUsuario(activity,nombre)
+            user = IdentyUserManager.getInstance(activity).defaultUser
 
             val templatesConfig= HashMap<Template, HashMap<Finger, ArrayList<TemplateSize>>>()
             val fingerSize = HashMap<Finger, ArrayList<TemplateSize>>()
@@ -58,11 +63,11 @@ class HandsBiometrics {
             fingerSize[Finger.LITTLE] = sizes
 
             templatesConfig[Template.PNG] = fingerSize
-          //  templatesConfig[Template.ANSI_378_2004] = fingerSize
+          // templatesConfig[Template.ANSI_378_2004] = fingerSize
            templatesConfig[Template.WSQ] = fingerSize
              // templatesConfig[Template.ISO_19794_2] = fingerSize
-           //  templatesConfig[Template.ISO_19794_4] = fingerSize
-         //   templatesConfig[Template.RAW]= fingerSize
+             //  templatesConfig[Template.ISO_19794_4] = fingerSize
+             //   templatesConfig[Template.RAW]= fingerSize
 
 
             detectionMode = arrayOf(FingerDetectionMode.R4F)
@@ -87,13 +92,14 @@ class HandsBiometrics {
                         d.isAllowTabletLandscape = true
                         d.setAllowHandChange(false)
 
+                        d.setQualityMode(QualityMode.ENROLLMENT)
                         d.setInlineGuide(false, InlineGuideOption(5,1))
                         d.setQC { true }
                         Log.e("Mensaje plantilla",templatesConfig.toString())
                         try {
 
                             d.setRequiredTemplates(templatesConfig)
-                            d.capture()
+                            d.enroll(user)
 
                         }catch (error: NoDetectionModeException){
                             Log.e("Mensaje ==>",error.toString())
@@ -118,9 +124,10 @@ class HandsBiometrics {
         fun validationHands(
             activity: Activity,
             listener: IdentyResponseListener,
-            nameComplete:String
+            idUser:String,
+            tipoLogin: Int
         ){
-
+            user = IdentyUserManager.getInstance(activity).defaultUser
             val templatesConfig= HashMap<Template, HashMap<Finger, ArrayList<TemplateSize>>>()
             val fingerSize = HashMap<Finger, ArrayList<TemplateSize>>()
 
@@ -135,8 +142,6 @@ class HandsBiometrics {
             fingerSize[Finger.LITTLE] = sizes
 
 
-
-
             templatesConfig[Template.PNG] = fingerSize
            //  templatesConfig[Template.ANSI_378_2004] = fingerSize
             templatesConfig[Template.WSQ] = fingerSize
@@ -145,7 +150,6 @@ class HandsBiometrics {
           //  templatesConfig[Template.RAW]= fingerSize
 
             detectionMode = arrayOf(FingerDetectionMode.R4F)
-
             try {
                 IdentySdk.newInstance(
                     activity,
@@ -168,29 +172,25 @@ class HandsBiometrics {
 
                         d.setQC { true }
 
+                        // d.matchWithCustomTemplates()
 
-
+                       Log.e("Mensaje",d.isEnrolled(detectionMode,IdentyUser()).toString())
                         try {
                             var template = HashMap<Pair<Hand,Finger>,String>()
 
-                            template[Pair.create(Hand.RIGHT, Finger.INDEX)] =
-                                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${nameComplete}/02-DEFAULT.WSQ").toString()
+                            template = searchById(idUser,activity)
 
-                            template[Pair(Hand.RIGHT, Finger.MIDDLE)] =
-                                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${nameComplete}/03-DEFAULT.WSQ").toString()
 
-                            template[Pair(Hand.RIGHT, Finger.RING)] =
-                                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${nameComplete}/04-DEFAULT.WSQ").toString()
-
-                            template[Pair(Hand.RIGHT, Finger.LITTLE)] =
-                                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${nameComplete}/05-DEFAULT.WSQ").toString()
 
                             Log.e("templates",template.toString())
                             try {
 
-                               val response =  d.verifyWithTemplates(Template.WSQ,template)
-                                Log.e("Resultado", response.toString())
-
+                                if (tipoLogin == 1){
+                                    val response =  d.verifyWithTemplates(Template.WSQ,template)
+                                    Log.e("Resultado", response.toString())
+                                } else if (tipoLogin == 2){
+                                        d.verify(user,1,40)
+                                }
 
                             }catch (error: Exception){
                                 Log.e("Mensaje ","Estoy aqui mirame")
@@ -274,6 +274,52 @@ class HandsBiometrics {
 
         }
 
+        fun searchAllData(
+            idUser: String,
+            activity: Activity
+        ):HashMap<Pair<Hand,Finger>,String>{
+            var template = HashMap<Pair<Hand,Finger>,String>()
+
+            //for ()
+
+            template[Pair.create(Hand.RIGHT, Finger.INDEX)] =
+                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${idUser}/02-DEFAULT.WSQ").toString()
+
+            template[Pair(Hand.RIGHT, Finger.MIDDLE)] =
+                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${idUser}/03-DEFAULT.WSQ").toString()
+
+            template[Pair(Hand.RIGHT, Finger.RING)] =
+                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${idUser}/04-DEFAULT.WSQ").toString()
+
+            template[Pair(Hand.RIGHT, Finger.LITTLE)] =
+                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${idUser}/05-DEFAULT.WSQ").toString()
+
+
+            return template
+        }
+
+
+        fun searchById(
+            idUser: String,
+            activity: Activity
+        ):HashMap<Pair<Hand,Finger>,String>{
+            var template = HashMap<Pair<Hand,Finger>,String>()
+
+
+            template[Pair.create(Hand.RIGHT, Finger.INDEX)] =
+                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${idUser}/02-DEFAULT.WSQ").toString()
+
+            template[Pair(Hand.RIGHT, Finger.MIDDLE)] =
+                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${idUser}/03-DEFAULT.WSQ").toString()
+
+            template[Pair(Hand.RIGHT, Finger.RING)] =
+                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${idUser}/04-DEFAULT.WSQ").toString()
+
+            template[Pair(Hand.RIGHT, Finger.LITTLE)] =
+                activity.getExternalFilesDir("/IDENTY/TEMPLATE_OUTPUT/user_${idUser}/05-DEFAULT.WSQ").toString()
+
+            return template
+        }
 
 
     }

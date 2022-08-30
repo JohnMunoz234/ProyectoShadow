@@ -5,24 +5,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Environment
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.saveable.SaveableStateRegistry
-import androidx.core.util.toKotlinPair
+
+
 import com.gse.aulapp.receptions.databinding.ActivitySelectorBiometricsBinding
 import com.identy.*
 import com.identy.enums.Finger
 import com.identy.enums.Hand
 import com.identy.enums.Template
-import org.json.JSONObject
+
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintWriter
 import java.util.*
-import java.util.HashMap
+
 
 
 class SelectorBiometrics : AppCompatActivity() {
@@ -35,7 +34,7 @@ class SelectorBiometrics : AppCompatActivity() {
     lateinit var email: String
     lateinit var nameComplete : String
     val base64encoding = Base64.DEFAULT
-    var operations = OperationsIdenty()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,11 +53,7 @@ class SelectorBiometrics : AppCompatActivity() {
         lastName = bundle?.getString("lastname").toString()
         email = bundle?.getString("email").toString()
 
-
-        nameComplete = name.plus(lastName).replace(" ","")
-        Log.d(TAG,nameComplete)
         Log.e("Mensaje ==>>",idUser)
-        preferences = getSharedPreferences("Huellas", Context.MODE_PRIVATE)
 
 
     }
@@ -117,7 +112,7 @@ class SelectorBiometrics : AppCompatActivity() {
                     }
                     // Codigo externo
                     var dir: File = createExternalDirectory("TEMPLATE_OUTPUT")
-                    dir = File(dir,"user_${nameComplete}")
+                    dir = File(dir,"user_${idUser}")
                     dir.mkdir()
 
                     // Manejo de las plantillas
